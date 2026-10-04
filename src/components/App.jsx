@@ -3,6 +3,7 @@ import { MapMarker } from '@primeicons/react'
 import Cartao from './Cartao'
 import Creditos from './Creditos'
 import Loading from './Loading'
+import MeuPonto from './MeuPonto'
 
 export default class App extends React.Component {
     state = {
@@ -25,7 +26,7 @@ export default class App extends React.Component {
       
               <div className='flex flex-column align-items-center gap-1'>
                   <div className='flex align-items-center gap-2'>
-                      <MapMarker size={24} color="#600000" />
+                      <MapMarker size={24} color="#8e0000" />
                       <h1 className='titulo'>RolêRadar</h1>
                   </div>
                   <div className="flex align-items-center">
@@ -42,7 +43,15 @@ export default class App extends React.Component {
                         !this.state.latitude ?
                             <Loading />
                         :
-                            <p>Localização obtida: {this.state.latitude}, {this.state.longitude}</p>
+                            <Cartao cabecalho="Você está aqui">
+                                <MeuPonto 
+                                    latitude ={this.state.latitude}
+                                    longitude={this.state.longitude}
+                                    horarioLocalizacao={this.state.horarioLocalizacao}
+                                    onAtualizar={this.obterLocalizacao}>                                    
+                                </MeuPonto>
+
+                            </Cartao>
                 
                 }
               </div>
