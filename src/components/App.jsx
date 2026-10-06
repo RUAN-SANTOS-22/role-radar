@@ -5,8 +5,8 @@ import Creditos from './Creditos'
 import Loading from './Loading'
 import MeuPonto from './MeuPonto'
 import geoapifyClient from '../utils/geoapifyClient'
-import { Button } from '@primereact/ui/button'
 import Busca from './Busca'
+import ListaLugares from './ListaLugares'
 
 export default class App extends React.Component {
     state = {
@@ -14,6 +14,7 @@ export default class App extends React.Component {
         longitude: null,
         horarioLocalizacao: null,
         mensagemDeErro: null,
+        lugares: null
     }
 
     componentDidMount() {
@@ -25,52 +26,62 @@ export default class App extends React.Component {
 
     render() {
         return (
-            <div className='flex flex-column align-items-center p-3'>
+            <div className='grid mx-5'>
 
-                <div className='flex flex-column align-items-center gap-1'>
-                    <div className='flex align-items-center gap-2'>
-                        <MapMarker size={24} color="#8e0000" />
-                        <h1 className='titulo'>RolêRadar</h1>
+                    <div className='col-12 flex flex-column align-items-center gap-2'>
+                        <div className='flex align-items-center gap-2'>
+                            <MapMarker size={24} color="#8e0000" />
+                            <h1 className='titulo'>RolêRadar</h1>
+                        </div>
+                        <p style={estiloSubtitulo}>Descubra o que existe perto de você</p>     
+                        <Creditos />
                     </div>
-                    <div className="flex align-items-center">
-                        <p style={estiloSubtitulo}>Descubra o que existe perto de você</p>
-                    </div>
-                    <Creditos />
-                </div>
 
-                <div className='flex flex-column gap-3 m-4'>
-                    {
-                        this.state.mensagemDeErro ?
-                            <p>{this.state.mensagemDeErro}</p>
-                            :
-                            !this.state.latitude ?
-                                <Loading />
+                    <div className='col-6 flex flex-column gap-3 gap-2'>
+                        {
+                            this.state.mensagemDeErro ?
+                                <p>{this.state.mensagemDeErro}</p>
                                 :
-                                <Cartao cabecalho="Você está aqui">
-                                    <MeuPonto
-                                        latitude={this.state.latitude}
-                                        longitude={this.state.longitude}
-                                        horarioLocalizacao={this.state.horarioLocalizacao}
-                                        onAtualizar={this.obterLocalizacao}>
-                                    </MeuPonto>
-                                </Cartao>
-                    }
-                <Cartao cabecalho="O que você procura?">
-                    <Busca onBuscaRealizada={this.onBuscaRealizada}>
+                                !this.state.latitude ?
+                                    <Loading />
+                                    :
+                                    <Cartao cabecalho="Você está aqui">
+                                        <MeuPonto
+                                            latitude={this.state.latitude}
+                                            longitude={this.state.longitude}
+                                            horarioLocalizacao={this.state.horarioLocalizacao}
+                                            onAtualizar={this.obterLocalizacao}>
+                                        </MeuPonto>
+                                    </Cartao>
+                        }
+                        <Cartao cabecalho="O que você procura?">
+                            <Busca onBuscaRealizada={this.onBuscaRealizada}>
+                            </Busca>
+                        </Cartao>
+                    </div>
+                    <div className="col-6 flex flex-column gap-3">
+                        {
+                            
+                            this.state.lugares === null ?
+                                null
+                            :
+                                this.state.lugares.length === 0 ?
+                                    <div className="flex justify-content-center mt-4">
+                                        <p>Nenhum lugar encontrado. Tente aumentar o raio.</p>
+                                    </div>
+                                :
+                                    <ListaLugares lugares={this.state.lugares} />
+                        }
+                    </div>
 
-                    </Busca>
-                </Cartao>
+                    <div className='col-12 flex rodape justify-content-center'>
+                        <p>RolêRadar © {obterAno()}</p>
+                    </div>
+
                 </div>
-                
-
-                <div className='rodape'>
-                    <p>RolêRadar © {obterAno()}</p>
-                </div>
-
-            </div>
         )
     }
-    
+
     obterLocalizacao = () => {
         window.navigator.geolocation.getCurrentPosition(
             (position) => {
@@ -101,6 +112,7 @@ export default class App extends React.Component {
                 limit: 20
             }
         }).then((result) => {
+            this.setState({lugares: result.data.features})
             console.log(result.data.features);
         });
     }

@@ -31,9 +31,9 @@ export default class Busca extends Component {
             this.setState({ erro: 'Escolha uma categoria.' })
             return
         }
-        const raioInt = Number(this.state.raio)
+        const raioNumero = Number(this.state.raio)
 
-        if (!Number.isInteger(raioInt) || raioInt < 100 || raioInt > 5000) {
+        if (!Number.isInteger(raioNumero) || raioNumero < 100 || raioNumero > 5000) {
             this.setState({
                 erro: 'Informe um raio inteiro entre 100 e 5000 metros.'
             })
@@ -42,7 +42,7 @@ export default class Busca extends Component {
 
         this.setState({ erro: null })
 
-        this.props.onBuscaRealizada(this.state.categoria, raioInt)
+        this.props.onBuscaRealizada(this.state.categoria, raioNumero)
 
     }
 
@@ -54,7 +54,7 @@ export default class Busca extends Component {
                     {
                         categorias.map((categoria) => (
                             <Button
-                                style={{ width: '100px' }}
+                                style={{ width: '90px' }}
                                 type="button"
                                 key={categoria.chave}
                                 size='small'
