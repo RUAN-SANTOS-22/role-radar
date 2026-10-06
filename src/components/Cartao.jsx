@@ -5,7 +5,7 @@ const estiloCaption = {
   borderBottom: '1px solid #dadada'
 }
 const estiloRoot = {
-  width: 'fit-content'
+  width: '100%'
 }
 const estiloBody = {
   padding: 0
