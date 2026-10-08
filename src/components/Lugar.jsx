@@ -36,9 +36,5 @@ const Lugar = ({numero, nome, endereco, distancia}) => {
         </Cartao>
   )
 }
-// https://react.dev/blog/2024/04/25/react-19-upgrade-guide#removed-proptypes-and-defaultprops
-// Lugar.defaultProps = {
-//     nome: 'Sem nome.'
-// }
 
 export default Lugar

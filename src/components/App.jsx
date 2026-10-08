@@ -7,6 +7,7 @@ import MeuPonto from './MeuPonto'
 import geoapifyClient from '../utils/geoapifyClient'
 import Busca from './Busca'
 import ListaLugares from './ListaLugares'
+import MapaRadar from './MapaRadar'
 
 export default class App extends React.Component {
     state = {
@@ -14,7 +15,10 @@ export default class App extends React.Component {
         longitude: null,
         horarioLocalizacao: null,
         mensagemDeErro: null,
-        lugares: null
+        lugares: null,
+        buscando: false,
+        erroBusca: null,
+        raioBuscado: null
     }
 
     componentDidMount() {
@@ -37,7 +41,7 @@ export default class App extends React.Component {
                         <Creditos />
                     </div>
 
-                    <div className='col-6 flex flex-column gap-3 gap-2'>
+                    <div className='col-6 flex flex-column gap-3'>
                         {
                             this.state.mensagemDeErro ?
                                 <p>{this.state.mensagemDeErro}</p>
@@ -56,30 +60,52 @@ export default class App extends React.Component {
                         }
                         <Cartao cabecalho="O que você procura?">
                             <Busca onBuscaRealizada={this.onBuscaRealizada}>
+                                
                             </Busca>
                         </Cartao>
                     </div>
+
                     <div className="col-6 flex flex-column gap-3">
-                        {
-                            
-                            this.state.lugares === null ?
-                                null
+                        {   
+                            this.state.buscando ?
+                                <Loading mensagem="Procurando lugares..."/>
                             :
-                                this.state.lugares.length === 0 ?
-                                    <div className="flex justify-content-center mt-4">
-                                        <p>Nenhum lugar encontrado. Tente aumentar o raio.</p>
-                                    </div>
+                                this.state.erroBusca ?
+                                    <p>{this.state.erroBusca}</p>
                                 :
-                                    <ListaLugares lugares={this.state.lugares} />
+                                    this.state.lugares === null ?
+                                        null
+                                    :
+                                        this.state.lugares.length === 0 ?
+                                            <div className="flex justify-content-center mt-4">
+                                                <p>Nenhum lugar encontrado. Tente aumentar o raio.</p>
+                                            </div>
+                                        :
+                                            <div className="flex flex-column gap-3">
+                                                <h2 className="m-1">{this.resumoRadar()}</h2>
+                                                <Cartao cabecalho="Radar">
+                                                    <MapaRadar
+                                                        latitude={this.state.latitude}
+                                                        longitude={this.state.longitude}
+                                                        lugares={this.state.lugares}
+                                                    ></MapaRadar>
+                                                </Cartao> 
+                                                <ListaLugares lugares={this.state.lugares} />
+                                            </div>
                         }
                     </div>
 
-                    <div className='col-12 flex rodape justify-content-center'>
+                    <div className='col-12 flex justify-content-center border-top-1 border-300 mt-2'>
                         <p>RolêRadar © {obterAno()}</p>
                     </div>
-
                 </div>
         )
+    }
+
+    resumoRadar = ()=>{
+        const qtdeLugares = this.state.lugares.length
+        const stringLugar = qtdeLugares === 1 ? 'lugar encontrado' : 'lugares encontrados'
+        return `${qtdeLugares} ${stringLugar} em até ${this.state.raioBuscado} m`
     }
 
     obterLocalizacao = () => {
@@ -103,6 +129,7 @@ export default class App extends React.Component {
 
     onBuscaRealizada = (categoria, raio) => {
         const { latitude, longitude } = this.state;
+        this.setState({buscando: true, raioBuscado: raio, erroBusca:false})
 
         geoapifyClient.get('/places', {
             params: {
@@ -111,10 +138,16 @@ export default class App extends React.Component {
                 bias: `proximity:${longitude},${latitude}`,
                 limit: 20
             }
-        }).then((result) => {
-            this.setState({lugares: result.data.features})
+        })
+        .then((result) => {
+            this.setState({lugares: result.data.features, buscando: false})
             console.log(result.data.features);
-        });
+        })
+        
+        .catch((erro)=>{
+            console.log(erro)
+            this.setState({buscando: false, erroBusca: " Não foi possível consultar os lugares. Tente novamente."})
+        })
     }
 }
 
