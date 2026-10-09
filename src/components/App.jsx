@@ -25,16 +25,12 @@ export default class App extends React.Component {
         this.obterLocalizacao()
     }
 
-    componentDidUpdate() {
-    }
-
     render() {
         return (
             <div className='grid mx-5'>
-
-                    <div className='col-12 flex flex-column align-items-center gap-2'>
+                    <div className='col-12 flex flex-column align-items-center gap-2 mx-5'>
                         <div className='flex align-items-center gap-2'>
-                            <MapMarker size={24} color="#8e0000" />
+                            <i className="pi pi-map-marker" style={{ color: "#8e0000", fontSize: '2rem'}}></i> 
                             <h1 className='titulo'>RolêRadar</h1>
                         </div>
                         <p style={estiloSubtitulo}>Descubra o que existe perto de você</p>     
@@ -47,7 +43,7 @@ export default class App extends React.Component {
                                 <p>{this.state.mensagemDeErro}</p>
                                 :
                                 !this.state.latitude ?
-                                    <Loading />
+                                    <Loading mensagem="Aguardando permissão de localização..." />
                                     :
                                     <Cartao cabecalho="Você está aqui">
                                         <MeuPonto
@@ -115,11 +111,12 @@ export default class App extends React.Component {
                 this.setState({
                     latitude: position.coords.latitude,
                     longitude: position.coords.longitude,
-                    horarioLocalizacao: dataMilissegundos
+                    horarioLocalizacao: dataMilissegundos,
+                    mensagemDeErro: null
                 })
             },
             (erro) => {
-                console.log(`Erro: ${erro}`)
+                console.log(erro)
                 this.setState({
                     mensagemDeErro: 'Não foi possível obter sua localização. Libere o acesso no navegador e atualize a página.'
                 })
@@ -141,7 +138,6 @@ export default class App extends React.Component {
         })
         .then((result) => {
             this.setState({lugares: result.data.features, buscando: false})
-            console.log(result.data.features);
         })
         
         .catch((erro)=>{

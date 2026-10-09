@@ -8,7 +8,6 @@ export default class MeuPonto extends Component {
     state = {
         agora: null
     }
-
     contador = null
 
     componentDidMount() {
@@ -20,7 +19,7 @@ export default class MeuPonto extends Component {
     }
 
     componentWillUnmount() {
-        clearInterval(this.timer)
+        clearInterval(this.contador)
         console.log('MeuPonto removido')
     }
 
@@ -43,7 +42,7 @@ export default class MeuPonto extends Component {
                 </p>
                 <p className="my-0">Hemisfério {hemisferio}</p>
                 <p className="my-0">Localização obtida há {segundos} s</p>
-                <Button className="mt-3" onClick={this.props.onAtualizar}>
+                <Button className="mt-3" variant="outlined" onClick={this.props.onAtualizar}>
                     <i className="pi pi-refresh"></i>
                     Atualizar localização
                 </Button>

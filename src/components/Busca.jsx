@@ -54,10 +54,10 @@ export default class Busca extends Component {
                     {
                         categorias.map((categoria) => (
                             <Button
-                                style={{ width: '90px' }}
+                                style={{padding:"5px 20px"}}
                                 type="button"
                                 key={categoria.chave}
-                                size='small'
+                                size='big'
                                 variant={this.state.categoria === categoria.chave ? "filled" : "outlined"}
                                 rounded={true}
                                 onClick={() => this.setState({ categoria: categoria.chave })}>
@@ -76,8 +76,7 @@ export default class Busca extends Component {
                     />
 
                     <Button
-                        className='w-5'
-                        rounded={true}>
+                        className='w-full'>
                         <Search /> Buscar
                     </Button>
 
